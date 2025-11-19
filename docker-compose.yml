@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  scraper:
+    build: .
+    container_name: catawiki-scraper
+    env_file:
+      - .env
+    volumes:
+      # Mount data directory for persistence
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./items.json:/app/items.json
+    restart: unless-stopped
+    environment:
+      - HEADLESS_MODE=true
+      - LOG_LEVEL=INFO
+    # Uncomment for continuous monitoring
+    # command: python extract_good_offer.py
+
+  # Optional: monitoring service
+  # monitor:
+  #   build: .
+  #   container_name: catawiki-monitor
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./data:/app/data
+  #     - ./logs:/app/logs
+  #     - ./items.json:/app/items.json
+  #   command: python checkItemLoop.py
+  #   restart: unless-stopped
