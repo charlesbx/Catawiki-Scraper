@@ -2,6 +2,7 @@
 Tests for the DealAnalyzer module.
 """
 import pytest
+import time
 from src.storage.models import WatchItem
 from src.analyzer.filters import DealAnalyzer, DealCriteria
 
@@ -12,13 +13,15 @@ class TestDealAnalyzer:
     def test_good_deal_detection(self):
         """Test that a good deal is correctly identified."""
         # Create a watch priced at 50% of estimate
+        # Use current timestamp to simulate an active auction
+        current_time = time.time()
         item = WatchItem(
             title="Rolex Submariner",
             price="5 000 €",
-            time="1h 30m",
+            time="20m",  # Less than 30min threshold
             url="https://example.com/item/123",
             estimated_price="9 000 € - 11 000 €",
-            pull_time=1700000000.0,
+            pull_time=current_time,
             reserve_price="No reserve price"
         )
         
@@ -31,13 +34,14 @@ class TestDealAnalyzer:
     def test_expensive_item_rejected(self):
         """Test that expensive items are rejected."""
         # Create a watch priced at 95% of estimate
+        current_time = time.time()
         item = WatchItem(
             title="Expensive Watch",
             price="9 500 €",
             time="30m",
             url="https://example.com/item/124",
             estimated_price="9 000 € - 11 000 €",
-            pull_time=1700000000.0,
+            pull_time=current_time,
             reserve_price="No reserve price"
         )
         
@@ -50,13 +54,14 @@ class TestDealAnalyzer:
     
     def test_reserve_not_met_rejected(self):
         """Test that items with unmet reserve are rejected."""
+        current_time = time.time()
         item = WatchItem(
             title="Rolex Submariner",
             price="5 000 €",
             time="30m",
             url="https://example.com/item/125",
             estimated_price="9 000 € - 11 000 €",
-            pull_time=1700000000.0,
+            pull_time=current_time,
             reserve_price="Reserve price not reached"
         )
         
@@ -73,13 +78,14 @@ class TestDealAnalyzer:
         analyzer = DealAnalyzer(criteria)
         
         # Item at 85% of estimate
+        current_time = time.time()
         item = WatchItem(
             title="Test Watch",
             price="8 500 €",
             time="30m",
             url="https://example.com/item/126",
             estimated_price="9 000 € - 11 000 €",
-            pull_time=1700000000.0,
+            pull_time=current_time,
             reserve_price="No reserve price"
         )
         
@@ -92,13 +98,14 @@ class TestDealAnalyzer:
         """Test deal quality scoring."""
         analyzer = DealAnalyzer()
         
+        current_time = time.time()
         good_deal = WatchItem(
             title="Great Deal",
             price="5 000 €",
             time="30m",
             url="https://example.com/item/127",
             estimated_price="10 000 € - 12 000 €",
-            pull_time=1700000000.0,
+            pull_time=current_time,
             reserve_price="No reserve price"
         )
         
@@ -108,7 +115,7 @@ class TestDealAnalyzer:
             time="30m",
             url="https://example.com/item/128",
             estimated_price="10 000 € - 12 000 €",
-            pull_time=1700000000.0,
+            pull_time=current_time,
             reserve_price="No reserve price"
         )
         
