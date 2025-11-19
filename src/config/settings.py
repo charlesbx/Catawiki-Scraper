@@ -2,6 +2,7 @@
 Configuration module for Catawiki Scraper.
 Uses environment variables for sensitive data.
 """
+
 import os
 from typing import List
 from dotenv import load_dotenv
@@ -13,17 +14,17 @@ load_dotenv()
 TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_IDS: List[str] = os.getenv("TELEGRAM_CHAT_IDS", "").split(",")
 
-# Validate required configuration
-if not TELEGRAM_BOT_TOKEN:
-    raise ValueError("TELEGRAM_BOT_TOKEN environment variable is required")
-if not TELEGRAM_CHAT_IDS or TELEGRAM_CHAT_IDS == [""]:
-    raise ValueError("TELEGRAM_CHAT_IDS environment variable is required")
+# Validate required configuration (only in non-test environments)
+TESTING_MODE = os.getenv("TESTING_MODE", "false").lower() == "true"
+
+if not TESTING_MODE:
+    if not TELEGRAM_BOT_TOKEN:
+        raise ValueError("TELEGRAM_BOT_TOKEN environment variable is required")
+    if not TELEGRAM_CHAT_IDS or TELEGRAM_CHAT_IDS == [""]:
+        raise ValueError("TELEGRAM_CHAT_IDS environment variable is required")
 
 # Scraper Configuration
-CATAWIKI_BASE_URL: str = os.getenv(
-    "CATAWIKI_BASE_URL",
-    "https://www.catawiki.com/fr/c/333-montres"
-)
+CATAWIKI_BASE_URL: str = os.getenv("CATAWIKI_BASE_URL", "https://www.catawiki.com/fr/c/333-montres")
 SCRAPER_MAX_ITEMS: int = int(os.getenv("SCRAPER_MAX_ITEMS", "300"))
 SCRAPER_SCROLL_DELAY: float = float(os.getenv("SCRAPER_SCROLL_DELAY", "0.05"))
 SCRAPER_PAGE_LOAD_DELAY: float = float(os.getenv("SCRAPER_PAGE_LOAD_DELAY", "0.25"))
