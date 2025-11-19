@@ -291,7 +291,7 @@ This tool is for educational and personal use only. Users are responsible for:
 
 **Charles Baux**
 - GitHub: [@charlesbx](https://github.com/charlesbx)
-- Portfolio: [Your Portfolio URL]
+- Portfolio: https://github.com/charlesbx
 
 ## 🙏 Acknowledgments
 
